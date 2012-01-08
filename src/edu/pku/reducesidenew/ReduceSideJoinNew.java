@@ -4,7 +4,9 @@
 package edu.pku.reducesidenew;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -115,55 +117,92 @@ public class ReduceSideJoinNew {
 		}
 	}
 
-	public static void main(String agrs[]) throws IOException,
+	public static void main(String args[]) throws IOException,
 			InterruptedException, ClassNotFoundException {
+		int num_reduces = 1;
+		boolean Default = false;
+		// specified for input/output path
+	    List<String> IOArgs = new ArrayList<String>(); 
+
 		Configuration conf = new Configuration();
-		GenericOptionsParser parser = new GenericOptionsParser(conf, agrs);
+		GenericOptionsParser parser = new GenericOptionsParser(conf, args);
 		String[] otherArgs = parser.getRemainingArgs();
-		if (agrs.length < 3) {
+		if (args.length < 3) {
 			System.err
-					.println("Usage: ReduceSideJoinNew <Table_one_path> <Table_two_path> <output>");
+					.println("Usage: ReduceSideJoinNew [-m MapperNum] [-r ReducerNum] [-Default] <Table_one_path> <Table_two_path> <output>");
 			System.exit(2);
-		}
-		// conf.set("hadoop.job.ugi", "root,hadoop");
-		Job job = new Job(conf, "ReduceSideJoinNew");
-		// Set job
-		job.setJarByClass(ReduceSideJoinNew.class);
-		// Set mapper
-		job.setMapperClass(ReduceSideMapper.class);
-		// Set mapper output
-		job.setMapOutputKeyClass(TextPair.class);
-		job.setMapOutputValueClass(Text.class);
-		// Set partitioner
-		job.setPartitionerClass(ReduceSidePartitionner.class);
-		// Set grouping condition after partitioning
-		job.setGroupingComparatorClass(ReduceSideComparator.class);
-		// Set reducer
-		job.setReducerClass(ReduceSideReducer.class);
-		// Set reducer output
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-		// Set input path and output path
-		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-		FileInputFormat.addInputPath(job, new Path(otherArgs[1]));
-		FileOutputFormat.setOutputPath(job, new Path(otherArgs[2]));
-		// Execution, wait for the job to complete.
-		Date startTime = new Date();
-		System.out.println("Job started: " + startTime);
-		boolean completeFlag = job.waitForCompletion(true);
-
-		//System.exit(job.waitForCompletion(true) ? 0 : 1);
-		if (completeFlag == true) {
-
-			Date end_time = new Date();
-			System.out.println("Job ended: " + end_time);
-			System.out.println("The job took "
-					+ (end_time.getTime() - startTime.getTime()) / 1000
-					+ " seconds.");
-			System.exit(0);
 		} else {
-			System.exit(1);
+			for (int i = 0; i < args.length; ++i) {
+				try {
+					if ("-r".equals(args[i])) {
+						num_reduces = Integer.parseInt(args[++i]);
+					} else if ("-Default".equals(args[i])) {
+						Default = true;
+					} else {
+						IOArgs.add(args[i]);
+					}
+				} catch (NumberFormatException except) {
+					System.out.println("ERROR: Integer expected instead of "
+							+ args[i]);
+					// return printUsage();
+					System.exit(2);
+				} catch (ArrayIndexOutOfBoundsException except) {
+					System.out
+							.println("ERROR: Required parameter missing from "
+									+ args[i - 1]);
+					System.exit(2);
+					// return printUsage(); // exits
+				}
+			}
+			// conf.set("hadoop.job.ugi", "root,hadoop");
+			Job job = new Job(conf, "ReduceSideJoinNew");
+			// Set job
+			if(!Default) {
+				job.setNumReduceTasks(num_reduces);
+				System.out.println("Maunal mode is enable,"+ " reducer num: " + num_reduces);
+			} else {
+				System.out.println("Default mode is enable, mapper and reduce num is determined by system.");
+			}
+			job.setJarByClass(ReduceSideJoinNew.class);
+			// Set mapper
+			job.setMapperClass(ReduceSideMapper.class);
+			// Set mapper output
+			job.setMapOutputKeyClass(TextPair.class);
+			job.setMapOutputValueClass(Text.class);
+			// Set partitioner
+			job.setPartitionerClass(ReduceSidePartitionner.class);
+			// Set grouping condition after partitioning
+			job.setGroupingComparatorClass(ReduceSideComparator.class);
+			// Set reducer
+			job.setReducerClass(ReduceSideReducer.class);
+			// Set reducer output
+			job.setOutputKeyClass(Text.class);
+			job.setOutputValueClass(Text.class);
+			// Set input path and output path
+			FileInputFormat.addInputPath(job, new Path(IOArgs.get(0).toString()));
+			FileInputFormat.addInputPath(job, new Path(IOArgs.get(1).toString()));
+			FileOutputFormat.setOutputPath(job, new Path(IOArgs.get(2).toString()));
+			//FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
+			//FileInputFormat.addInputPath(job, new Path(otherArgs[1]));
+			//FileOutputFormat.setOutputPath(job, new Path(otherArgs[2]));
+			// Execution, wait for the job to complete.
+			Date startTime = new Date();
+			System.out.println("Job started: " + startTime);
+			boolean completeFlag = job.waitForCompletion(true);
 
+			// System.exit(job.waitForCompletion(true) ? 0 : 1);
+			if (completeFlag == true) {
+
+				Date end_time = new Date();
+				System.out.println("Job ended: " + end_time);
+				System.out.println("The job took "
+						+ (end_time.getTime() - startTime.getTime()) / 1000
+						+ " seconds.");
+				System.exit(0);
+			} else {
+				System.exit(1);
+
+			}
 		}
 	}
 }

@@ -126,9 +126,13 @@ public class MapSideJoin extends Configured implements Tool {
     // Confine the input file parameter to 2.
     List<Path> plist = new ArrayList<Path>(2);
     // TODO automatically change the input parameter into this stuff
-    String[] outputPath = {"/home/hadoop/join/in/table1.seq", "/home/hadoop/join/in/table2.seq"};
+    //String[] outputPath = {"/home/hadoop/join/in/table1.seq", "/home/hadoop/join/in/table2.seq"};
+    String[] inputPath = new String[2];
+    String[] outputPath = new String[2];
     for (int i=0; i<2; i++) {
-    	SequenceFileIO.write(otherArgs.get(i).toString(), outputPath[i]);
+    	inputPath[i] = otherArgs.get(i).toString();
+    	outputPath[i] = inputPath[i].replaceFirst(".txt$", ".seq"); 
+    	SequenceFileIO.write(inputPath[i], outputPath[i]);
     	plist.add(new Path(outputPath[i]));
     }
     

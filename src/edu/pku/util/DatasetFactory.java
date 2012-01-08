@@ -7,7 +7,13 @@ import java.io.PrintWriter;
 
 public class DatasetFactory {
 	public static final String[] course = { "Alogrithm", "Database",
-			"SoftwareTesting" };
+			"SoftwareTesting", "NLP", "ComplexNetwork", "ParallelComputing",
+			"DataMining", "GraphMining", "DSP", "ImageP", "Security",
+			"Networking", "Optimazing", "MobileComputing", "ML",
+			"InfoHiding", "AI", "3DRecons", "ComputerGraphics", 
+			"DistributedCom", "WebServer", "iOSDev", "AndroidDev",
+			"InfoRetriving", "FrontendDev", "WPDev", "VideoInfoP", "Multimedia",
+			"Codec", "InfoExtract"};
 
 	public static void table1(int num, String path) {
 		PrintWriter pw = null;
@@ -70,7 +76,7 @@ public class DatasetFactory {
 		table1(1000, "/home/hadoop/join/in/dataset1.txt");
 	}
 
-	public static void table2(int num, String path) {
+	public static void table2(int num, String path, int classTotalNum) {
 		PrintWriter pw = null;
 		FileWriter writer = null;
 		File file = null;
@@ -93,13 +99,13 @@ public class DatasetFactory {
 				}
 			}
 
-			classNum = ((int) (99 * Math.random()) % 3) + 1;
+			classNum = ((int) (99 * Math.random()) % classTotalNum) + 1;
 
 			for (int jj = 0; jj < classNum; jj++) {
 				if (jj == 0) {
-					index = ((int) (99 * Math.random())) % 3;
+					index = ((int) (99 * Math.random())) % classTotalNum;
 				} else {
-					index = (index + 1) % 3;
+					index = (index + 1) % classTotalNum;
 				}
 				sb.append(x + initial - 1);
 				sb.append("\t");
@@ -129,12 +135,31 @@ public class DatasetFactory {
 	}
 
 	public static void table2(int num) {
-		table2(num, "/home/hadoop/join/in/dataset2.txt");
+		table2(num, "/home/hadoop/join/in/dataset2.txt", 3);
 	}
 
 	public static void table2() {
-		table2(1000, "/home/hadoop/join/in/dataset2.txt");
+		table2(1000, "/home/hadoop/join/in/dataset2.txt", 3);
 	}
+	
+	//filename s for skew.
+	public static void skewTable2(int num) {
+		table2(num, "/home/hadoop/join/in/dataset2s.txt", 30);
+	}
+
+	public static void skewTable2() {
+		table2(1000, "/home/hadoop/join/in/dataset2s.txt", 30);
+	}
+	
+	//filename s for skew.
+	public static void skewTable1(int num) {
+		table1(num, "/home/hadoop/join/in/dataset1s.txt");
+	}
+
+	public static void skewTable1() {
+		table1(1000, "/home/hadoop/join/in/dataset1s.txt");
+	}
+
 
 	public static int estimateSize(int num) {
 		int threshold = 1;

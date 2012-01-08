@@ -17,10 +17,10 @@ public class JoinReducer extends MapReduceBase implements
 			OutputCollector<Text, Text> output, Reporter reporter)
 			throws IOException {
 
-		Text studentName = new Text(values.next());
+		Text stationName = new Text(values.next());
 		while (values.hasNext()) {
 			Text record = values.next();
-			Text outValue = new Text(studentName.toString() + "\t"
+			Text outValue = new Text(stationName.toString() + "\t"
 					+ record.toString());
 			output.collect(key.getFirst(), outValue);
 		}
