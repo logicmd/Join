@@ -39,9 +39,9 @@ Structure
                   TableTwoParser.java
                   TextPair.java
 
-所有源码放在```edu.pku.*```的Package下面。
+所有源码放在 ```edu.pku.*``` 的Package下面。
 
-```edu.pku.util```是整个Join框架所需的工具集，包括两个Table的Parser用于封装parse过程，让map阶段显得更干净。DatasetFactory用于生产测试数据。TextPair是一个自定义的数据类型，用于生产text对。
+```edu.pku.util``` 是整个Join框架所需的工具集，包括两个Table的Parser用于封装parse过程，让map阶段显得更干净。DatasetFactory用于生产测试数据。TextPair是一个自定义的数据类型，用于生产text对。
 
 - ```edu.pku.mapside``` 是Mapside Join的实现，包括Mapper和Join过程。
 - ```edu.pku.reduceside``` 是Reduceside Join的实现，包括Mapper，Reducer和Join过程。
