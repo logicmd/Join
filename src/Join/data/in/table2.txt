@@ -1,0 +1,5 @@
+1001	Alogrithm	98
+1001	Database	99
+1002	Alogrithm	97
+1002	Database	100
+1002	Soft Testing	88
